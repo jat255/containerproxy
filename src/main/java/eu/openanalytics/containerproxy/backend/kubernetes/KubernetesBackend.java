@@ -173,6 +173,18 @@ public class KubernetesBackend extends AbstractContainerBackend {
                         .withName(name)
                         .withReadOnly(true)
                         .build();
+            } else if ("configmap".equals(volumeType)) {
+                volumes.add(new VolumeBuilder()
+                        .withName(name)
+                        .withNewConfigMap()
+                        .withName(volumeSource)
+                        .endConfigMap()
+                        .build());
+                volumeMounts[i] = new VolumeMountBuilder()
+                        .withMountPath(containerDest)
+                        .withName(name)
+                        .withReadOnly(true)
+                        .build();
             }
         }
 
