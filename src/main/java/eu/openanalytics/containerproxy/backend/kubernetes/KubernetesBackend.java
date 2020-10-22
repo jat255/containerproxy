@@ -163,64 +163,18 @@ public class KubernetesBackend extends AbstractContainerBackend {
 		VolumeMount[] volumeMounts = new VolumeMount[volumeStrings.length];
 		for (int i = 0; i < volumeStrings.length; i++) {
 			String[] volume = volumeStrings[i].split(":");
-			String volumeType;
-			String volumeSource;
-			String containerDest;
-            if (volume.length == 2) { // If only two parts supplied, then assume host mount.
-    			volumeType = "host";
-	    		volumeSource = volume[0];
-		    	containerDest = volume[1];
-            } else {
-    			volumeType = volume[0];
-	    		volumeSource = volume[1];
-		    	containerDest = volume[2];
-            }
+			String hostSource = volume[0];
+			String containerDest = volume[1];
 			String name = "shinyproxy-volume-" + i;
-            if ("host".equals(volumeType)) {
-                volumes.add(new VolumeBuilder()
-                        .withNewHostPath(volumeSource, "")
-                        .withName(name)
-                        .build());
-                volumeMounts[i] = new VolumeMountBuilder()
-                        .withMountPath(containerDest)
-                        .withName(name)
-                        .build();
-            } else if ("pvc".equals(volumeType)) {
-                volumes.add(new VolumeBuilder()
-                        .withNewPersistentVolumeClaim(volumeSource, false) // readonly - false
-                        .withName(name)
-                        .build());
-                volumeMounts[i] = new VolumeMountBuilder()
-                        .withMountPath(containerDest)
-                        .withName(name)
-                        .withReadOnly(false)
-                        .build();
-            } else if ("secret".equals(volumeType)) {
-                volumes.add(new VolumeBuilder()
-                        .withName(name)
-                        .withNewSecret()
-                        .withSecretName(volumeSource)
-                        .endSecret()
-                        .build());
-                volumeMounts[i] = new VolumeMountBuilder()
-                        .withMountPath(containerDest)
-                        .withName(name)
-                        .withReadOnly(true)
-                        .build();
-            } else if ("configmap".equals(volumeType)) {
-                volumes.add(new VolumeBuilder()
-                        .withName(name)
-                        .withNewConfigMap()
-                        .withName(volumeSource)
-                        .endConfigMap()
-                        .build());
-                volumeMounts[i] = new VolumeMountBuilder()
-                        .withMountPath(containerDest)
-                        .withName(name)
-                        .withReadOnly(true)
-                        .build();
-            }
-        }
+			volumes.add(new VolumeBuilder()
+					.withNewHostPath(hostSource, "")
+					.withName(name)
+					.build());
+			volumeMounts[i] = new VolumeMountBuilder()
+					.withMountPath(containerDest)
+					.withName(name)
+					.build();
+		}
 
 		List<EnvVar> envVars = new ArrayList<>();
 		for (String envString : buildEnv(spec, proxy)) {
