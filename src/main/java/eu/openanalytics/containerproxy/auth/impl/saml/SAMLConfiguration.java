@@ -87,6 +87,8 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import eu.openanalytics.containerproxy.auth.impl.saml.CustomSAMLBootstrap;
+
 @Configuration
 @ConditionalOnProperty(name="proxy.authentication", havingValue="saml")
 public class SAMLConfiguration {
@@ -338,14 +340,4 @@ public class SAMLConfiguration {
 			super(chain);
 		}
 	}
-}
-
-public final class CustomSAMLBootstrap extends SAMLBootstrap {
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        super.postProcessBeanFactory(beanFactory);
-        BasicSecurityConfiguration config = (BasicSecurityConfiguration) Configuration.getGlobalSecurityConfiguration();
-        config.registerSignatureAlgorithmURI("RSA", SignatureConstants.ALGO_ID_SIGNATURE_RSA_SHA256);
-        config.setSignatureReferenceDigestMethod(SignatureConstants.ALGO_ID_DIGEST_SHA256);
-    }
 }
