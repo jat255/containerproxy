@@ -1,4 +1,11 @@
+package eu.openanalytics.containerproxy.auth.impl.saml;
+
 import org.springframework.security.saml.SAMLBootstrap;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.BeansException;
+import org.opensaml.xml.security.BasicSecurityConfiguration;
+import org.opensaml.xml.Configuration;
+import org.opensaml.xml.signature.SignatureConstants;
 
 public final class CustomSAMLBootstrap extends SAMLBootstrap {
     @Override
